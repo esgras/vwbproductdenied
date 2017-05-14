@@ -1,0 +1,1 @@
+ALTER TABLE PREFIX_product ADD date_inactive INT DEFAULT NULL;

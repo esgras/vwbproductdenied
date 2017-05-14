@@ -21,6 +21,10 @@ class VwbProductDenied extends Module
         if (!$this->installTab(0, 'AdminDeniedProduct', 'Denied Products'))
             return false;
 
+        if (!$this->loadSqlFromFile(__DIR__ . '/install/install.sql'))
+            return false;
+
+
         return true;
     }
 
@@ -31,6 +35,10 @@ class VwbProductDenied extends Module
 
         if (!$this->uninstallTab('AdminDeniedProduct'))
             return false;
+
+        if (!$this->loadSqlFromFile(__DIR__ . '/install/uninstall.sql'))
+            return false;
+
 
         return true;
     }
@@ -64,5 +72,20 @@ class VwbProductDenied extends Module
     public function getModuleUri()
     {
         return $this->_path;
+    }
+
+    public function loadSqlFromFile($file)
+    {
+        $sqlContent = file_get_contents($file);
+        $sqlContent = str_replace('PREFIX_', _DB_PREFIX_, $sqlContent);
+        $sqlContent = str_replace('FIELD_NAME', $this->fieldName, $sqlContent);
+        $queries = preg_split('#;\s*[\r\n]*#', $sqlContent, -1, PREG_SPLIT_NO_EMPTY);
+
+        $res = true;
+        foreach ($queries as $query) {
+              $res &= DB::getInstance()->execute(trim($query));
+        }
+
+        return $res;
     }
 }

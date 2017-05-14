@@ -1,0 +1,1 @@
+ALTER TABLE PREFIX_product DROP date_inactive;
